@@ -242,6 +242,54 @@ const App = () => {
   const ambientGainRef = useRef<GainNode | null>(null);
   const bowlTimerRef = useRef<number | null>(null);
 
+  // --- Dynamic App Icon Generation for iOS ---
+  useEffect(() => {
+    const generateIcon = () => {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = 512;
+        canvas.height = 512;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        // Draw Background
+        ctx.fillStyle = '#12100e';
+        ctx.fillRect(0, 0, 512, 512);
+
+        // Center and Scale for the Lotus
+        ctx.translate(256, 256); 
+        const scale = 14; 
+        ctx.scale(scale, scale);
+        ctx.translate(-12, -12); // Re-center based on 24x24 viewbox
+
+        ctx.lineWidth = 1.2; // Adjusted for scale
+        ctx.strokeStyle = '#d4af37';
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+
+        const p1 = new Path2D("M12 2C12 2 16 8 16 12C16 16 12 22 12 22C12 22 8 16 8 12C8 8 12 2 12 2Z");
+        ctx.stroke(p1);
+        
+        const p2 = new Path2D("M12 22C12 22 17 18 20 15C23 12 20 8 18 8");
+        ctx.stroke(p2);
+        
+        const p3 = new Path2D("M12 22C12 22 7 18 4 15C1 12 4 8 6 8");
+        ctx.stroke(p3);
+
+        // Update Link Tag
+        const link = document.getElementById('apple-touch-icon') as HTMLLinkElement;
+        if (link) {
+          link.href = canvas.toDataURL('image/png');
+        }
+      } catch (e) {
+        console.warn("Failed to generate dynamic app icon", e);
+      }
+    };
+    
+    // Slight delay to ensure DOM is ready and not block initial render
+    setTimeout(generateIcon, 100);
+  }, []);
+
   const setupAmbientMusic = useCallback(() => {
     if (!ambientContextRef.current) {
       const Ctx = window.AudioContext || (window as any).webkitAudioContext;
