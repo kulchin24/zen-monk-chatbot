@@ -564,7 +564,7 @@ const App = () => {
   };
 
   return (
-    <div className="h-screen w-full flex flex-col bg-[#12100e] relative overflow-hidden" onClick={() => { if (loadingPhase === 'headphones') handleInitialClick(); else if (loadingPhase === 'wisdom') enterSanctuary(); }}>
+    <div className="h-[100dvh] w-full flex flex-col bg-[#12100e] relative overflow-hidden" onClick={() => { if (loadingPhase === 'headphones') handleInitialClick(); else if (loadingPhase === 'wisdom') enterSanctuary(); }}>
       
       {/* Top Right Controls - Visible when settled */}
       {isSettled && (
@@ -651,7 +651,8 @@ const App = () => {
             onChange={(e) => setInput(e.target.value)} 
             onKeyDown={(e) => e.key === 'Enter' && handleSend()} 
             placeholder={isSettled ? "Exhale your words..." : "Waiting..."} 
-            className="w-full bg-stone-900/70 text-stone-300 placeholder-stone-700 px-8 md:px-10 py-5 rounded-full outline-none border border-stone-800/40 backdrop-blur-3xl font-serif text-sm md:text-base tracking-[0.1em] transition-all focus:border-[#d4af37]/30 shadow-2xl" 
+            className="w-full bg-stone-900/70 text-stone-300 placeholder-stone-700 px-8 md:px-10 py-5 rounded-full outline-none border border-stone-800/40 backdrop-blur-3xl font-serif text-base tracking-[0.1em] transition-all focus:border-[#d4af37]/30 shadow-2xl" 
+            enterKeyHint="send"
             disabled={isThinking || !isSettled} 
           />
           <button 
