@@ -388,7 +388,7 @@ const App = () => {
       }
     }
     const sequence = async () => {
-      await new Promise(r => setTimeout(r, 1200));
+      await new Promise(r => setTimeout(r, 1500));
       setIsOverlayFading(true);
       await new Promise(r => setTimeout(r, 800));
       setIsMonkEntering(true);
@@ -512,7 +512,7 @@ const App = () => {
       )}
 
       {loadingPhase !== 'done' && (
-        <div className={`fixed inset-0 z-[100] bg-[#12100e] flex flex-col items-center justify-center transition-opacity duration-[2000ms] ${isOverlayFading ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+        <div className={`fixed inset-0 z-[100] bg-[#12100e] flex flex-col items-center justify-center overflow-hidden transition-opacity duration-[2000ms] ${isOverlayFading ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
           <div className="absolute inset-0 bg-radial-glow opacity-10 pointer-events-none" />
           
           <div className={`flex flex-col items-center justify-center w-full h-full px-8 transition-opacity duration-[1000ms] ${loadingPhase === 'init' ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
@@ -533,12 +533,12 @@ const App = () => {
 
           <div className={`absolute inset-0 flex flex-col items-center justify-center transition-opacity duration-1000 ${isLogoVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
             
-            <div className={`absolute flex flex-col items-center justify-center translate-y-[-140px] transition-all duration-1000 ${loadingPhase === 'entering' ? 'scale-95 opacity-80' : ''}`}>
+            <div className={`absolute flex flex-col items-center justify-center translate-y-[-140px] transition-all duration-1000 ${loadingPhase === 'entering' ? 'scale-[1.05] opacity-0' : ''}`}>
               <div className="relative mb-8">
                  <div className={`absolute inset-0 bg-[#d4af37] blur-[60px] rounded-full scale-[2.5] transition-opacity duration-1000 ${loadingPhase === 'entering' ? 'opacity-0' : 'opacity-25'}`} />
                  <LotusIcon size={90} className="relative z-10" isErasing={loadingPhase === 'entering'} />
               </div>
-              <h1 className={`text-[#d4af37] font-serif text-lg sm:text-xl tracking-[0.2em] sm:tracking-[0.5em] uppercase drop-shadow-lg text-center whitespace-nowrap transition-all duration-[1200ms] ${loadingPhase === 'entering' ? 'opacity-0 tracking-[0.8em]' : 'opacity-100'}`}>
+              <h1 className={`text-[#d4af37] font-serif text-lg sm:text-xl tracking-[0.2em] sm:tracking-[0.5em] uppercase drop-shadow-lg text-center whitespace-nowrap transition-all duration-[1500ms] ease-out ${loadingPhase === 'entering' ? 'opacity-0 scale-[1.05] blur-sm' : 'opacity-100 scale-100 blur-0'}`}>
                 The Silent Temple
               </h1>
             </div>
