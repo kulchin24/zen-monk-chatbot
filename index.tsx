@@ -158,9 +158,28 @@ const VolumeControl = ({ isMusic, toggleMusic, isVoice, toggleVoice }: { isMusic
 
 const MonkAvatar = ({ isSpeaking, isThinking, isEntering }: { isSpeaking: boolean, isThinking: boolean, isEntering: boolean }) => {
   const isActive = isSpeaking || isThinking;
+  
   return (
     <div className={`relative w-48 h-48 md:w-64 md:h-64 mx-auto transition-all duration-[4000ms] ${isEntering ? 'monk-entrance' : ''}`}>
-      <div className={`aura absolute inset-0 rounded-full bg-[#d4af37] transition-all duration-[2000ms] ${isActive ? 'aura-active scale-110 opacity-20' : 'opacity-5 scale-100'}`}></div>
+      {/* 
+         LAYER 1: Subtle Idle Aura (Always present but very low opacity)
+         Uses 'aura' class from CSS for continuous slow breathing 
+      */}
+      <div className={`aura absolute inset-0 rounded-full bg-[#d4af37] blur-[60px] opacity-10`} />
+
+      {/* 
+         LAYER 2: Active Resonance (Expands during thought/speech)
+         Decoupled from Layer 1 to ensure transitions are crisp.
+         Asymmetric Timing: 2.5s bloom (peaceful), 0.3s snap-back (responsive).
+      */}
+      <div 
+        className={`absolute inset-0 rounded-full bg-[#d4af37] blur-[100px] transform-gpu transition-all
+          ${isActive 
+            ? 'opacity-20 scale-125 duration-[2500ms] ease-out' 
+            : 'opacity-0 scale-100 duration-300 ease-in'
+          }`}
+      />
+
       <svg viewBox="0 0 200 200" className="relative z-10 w-full h-full">
         <path className="monk-breathing" d="M45,170 C45,135 65,110 100,110 C135,110 155,135 155,170 L155,190 L45,190 Z" fill="#1c1917" stroke="#292524" strokeWidth="0.5" />
         <g>
@@ -416,7 +435,10 @@ const App = () => {
   }, []);
 
   const playTTS = useCallback(async (text: string, msgId: string, isAuto: boolean = false) => {
-    if (isAuto && !isAudioEnabled) return;
+    if (isAuto && !isAudioEnabled) {
+      setIsSpeaking(false);
+      return;
+    }
     if (audioContext.state === 'suspended') await audioContext.resume();
     if (currentAudioSource) { try { currentAudioSource.stop(); } catch (e) {} }
 
@@ -474,8 +496,11 @@ const App = () => {
         fullText += chunk.text;
         setMessages(prev => prev.map(msg => msg.id === modelMsgId ? { ...msg, text: fullText } : msg));
       }
-      if (isAudioEnabled) playTTS(fullText, modelMsgId, true);
-      else setIsSpeaking(false);
+      if (isAudioEnabled) {
+        await playTTS(fullText, modelMsgId, true);
+      } else {
+        setIsSpeaking(false);
+      }
     } catch (e) {
       console.error(e);
       setIsSpeaking(false);
@@ -533,7 +558,6 @@ const App = () => {
 
           <div className={`absolute inset-0 flex flex-col items-center justify-center transition-opacity duration-1000 ${isLogoVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
             
-            {/* Logo Block: Positioned with absolute top to ensure stability across phases */}
             <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[200px] flex flex-col items-center justify-center transition-all duration-1000 ${loadingPhase === 'entering' ? 'scale-[1.05] opacity-0 blur-md' : 'scale-100 opacity-100 blur-0'}`}>
               <div className="relative mb-8">
                  <div className={`absolute inset-0 bg-[#d4af37] blur-[60px] rounded-full scale-[2.5] transition-opacity duration-1000 ${loadingPhase === 'entering' ? 'opacity-0' : 'opacity-25'}`} />
@@ -544,7 +568,6 @@ const App = () => {
               </h1>
             </div>
 
-            {/* Quote Block: Positioned separately to avoid affecting Logo position */}
             <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[-20px] w-full max-w-xl px-12 text-center transition-all duration-[2000ms] flex flex-col gap-4 ${isQuoteVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'} ${loadingPhase === 'entering' ? 'opacity-0 scale-105' : ''}`}>
                <p className="text-stone-500 font-serif text-lg md:text-xl italic tracking-wide leading-relaxed">
                  "{loadingQuote?.text}"
