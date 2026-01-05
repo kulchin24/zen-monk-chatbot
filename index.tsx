@@ -1,16 +1,40 @@
+
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { createRoot } from "react-dom/client";
 import { GoogleGenAI, Modality } from "@google/genai";
 
 // --- Data ---
 const LOADING_QUOTES = [
-  "The mind is like water. When it is agitated, it is difficult to see. When it is calm, everything becomes clear.",
-  "Do not dwell in the past, do not dream of the future, concentrate the mind on the present moment.",
-  "Peace comes from within. Do not seek it without.",
-  "In the end, only three things matter: how much you loved, how gently you lived, and how gracefully you let go of things not meant for you.",
-  "Silence is not the absence of sound, but the absence of noise.",
-  "To understand everything is to forgive everything.",
-  "Breathe. You are exactly where you are meant to be."
+  { text: "Whatever a mother, father, or other relative might do for you, a well-directed mind does better.", source: "Buddha, Dhammapada, Verse 43" },
+  { text: "Drop by drop is the water pot filled. Likewise, the wise man, gathering it little by little, fills himself with good.", source: "Buddha, Dhammapada, Verse 122" },
+  { text: "Irrigators channel waters; fletchers straighten arrows; carpenters bend wood; the wise master themselves.", source: "Buddha, Dhammapada, Verse 80" },
+  { text: "Just as a solid rock is not shaken by the storm, even so the wise are not affected by praise or blame.", source: "Buddha, Dhammapada, Verse 81" },
+  { text: "There is no fear for one whose mind is not filled with desires.", source: "Buddha, Dhammapada, Verse 39" },
+  { text: "Mind precedes all mental states. Mind is their chief; they are all mind-wrought.", source: "Buddha, Dhammapada, Verse 1" },
+  { text: "Hatred does not cease by hatred, but only by love; this is the eternal rule.", source: "Buddha, Dhammapada, Verse 5" },
+  { text: "Conquer anger with non-anger. Conquer badness with goodness. Conquer meanness with generosity. Conquer dishonesty with truth.", source: "Buddha, Dhammapada, Verse 223" },
+  { text: "Just as a mother would protect her only child with her life, even so let one cultivate a boundless love towards all beings.", source: "Buddha, Sutta Nipata, Verse 149" },
+  { text: "Speak the truth; do not yield to anger; give, if asked for little. By these three steps, you will go near the gods.", source: "Buddha, Dhammapada, Verse 224" },
+  { text: "Full of love for all things in the world, practicing virtue in order to benefit others, this man alone is happy.", source: "Buddha, Dhammapada, Verse 368" },
+  { text: "Look upon the world as a bubble, look upon it as a mirage: the king of death does not see him who thus looks down upon the world.", source: "Buddha, Dhammapada, Verse 170" },
+  { text: "All conditioned things are impermanent—when one sees this with wisdom, one turns away from suffering.", source: "Buddha, Dhammapada, Verse 277" },
+  { text: "From attachment springs grief, from attachment springs fear. For him who is wholly free from attachment, there is no grief, much less fear.", source: "Buddha, Dhammapada, Verse 212" },
+  { text: "Let go of the past, let go of the future, let go of the present, and cross over to the farther shore of existence.", source: "Buddha, Dhammapada, Verse 348" },
+  { text: "There are those who do not realize that one day we all must die. But those who do realize this settle their quarrels.", source: "Buddha, Dhammapada, Verse 6" },
+  { text: "You yourself must strive. The Buddhas only point the way.", source: "Buddha, Dhammapada, Verse 276" },
+  { text: "If you find no one to support you on the spiritual path, walk alone.", source: "Buddha, Dhammapada, Verse 61" },
+  { text: "It is easy to do what is wrong and harmful to oneself. It is very difficult to do what is beneficial and good.", source: "Buddha, Dhammapada, Verse 163" },
+  { text: "Better it is to live one day seeing the rise and fall of things, than a hundred years without ever seeing it.", source: "Buddha, Dhammapada, Verse 113" },
+  { text: "Do not disregard small good deeds, thinking they will not matter.", source: "Buddha, Dhammapada, Verse 122" },
+  { text: "Arise! Do not be negligent! Lead a righteous life. The righteous live happily both in this world and the next.", source: "Buddha, Dhammapada, Verse 168" },
+  { text: "The sun shines by day, the moon by night. The warrior shines in armor, the brahmin shines in meditation. But the Awakened One shines in glory all day and night.", source: "Buddha, Dhammapada, Verse 387" },
+  { text: "Purity and impurity depend on oneself; no one can purify another.", source: "Buddha, Dhammapada, Verse 165" },
+  { text: "Fools wait for a lucky day, but every day is a lucky day for an industrious man.", source: "Buddha, Jataka, Vol I, 49" },
+  { text: "One is not a wise man because he talks a lot. He who is peaceful, friendly, and fearless is called wise.", source: "Buddha, Dhammapada, Verse 258" },
+  { text: "Better than a thousand hollow words is one word that brings peace.", source: "Buddha, Dhammapada, Verse 100" },
+  { text: "There is no happiness greater than peace.", source: "Buddha, Dhammapada, Verse 202" },
+  { text: "He who has tasted the flavor of solitude and tranquility becomes free from fear and sin.", source: "Buddha, Dhammapada, Verse 205" },
+  { text: "Like a beautiful flower, full of color but without scent, are the fine but fruitless words of him who does not act in accordance with them.", source: "Buddha, Dhammapada, Verse 51" }
 ];
 
 // --- Audio Utilities ---
@@ -45,20 +69,15 @@ async function decodeAudioData(
   return buffer;
 }
 
-// Improved Formatter to handle Bold (**text**) and Italics (*text*)
 const FormattedText = ({ text }: { text: string }) => {
   if (!text) return null;
-  
-  // Split by bold (**...**) first
   const boldParts = text.split(/(\*\*.*?\*\*)/g);
-  
   return (
     <>
       {boldParts.map((part, i) => {
         if (part.startsWith('**') && part.endsWith('**')) {
           return <strong key={i} className="font-bold text-stone-300">{part.slice(2, -2)}</strong>;
         }
-        // Then split non-bold parts by italics (*...*)
         const italicParts = part.split(/(\*.*?\*)/g);
         return (
           <span key={i}>
@@ -75,11 +94,18 @@ const FormattedText = ({ text }: { text: string }) => {
   );
 };
 
-const LotusIcon = ({ size = 24, className = "" }: { size?: number, className?: string }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="#d4af37" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <path d="M12 2C12 2 16 8 16 12C16 16 12 22 12 22C12 22 8 16 8 12C8 8 12 2 12 2Z" />
-    <path d="M12 22C12 22 17 18 20 15C23 12 20 8 18 8" />
-    <path d="M12 22C12 22 7 18 4 15C1 12 4 8 6 8" />
+const LotusIcon = ({ size = 24, className = "", isErasing = false }: { size?: number, className?: string, isErasing?: boolean }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="#d4af37" strokeWidth="0.75" strokeLinecap="round" strokeLinejoin="round" className={`${className} ${isErasing ? 'erasing' : ''}`}>
+    <path className="erase-path p1" d="M12 2C12 2 16 8 16 12C16 16 12 22 12 22C12 22 8 16 8 12C8 8 12 2 12 2Z" />
+    <path className="erase-path p2" d="M12 22C12 22 17 18 20 15C23 12 20 8 18 8" />
+    <path className="erase-path p3" d="M12 22C12 22 7 18 4 15C1 12 4 8 6 8" />
+  </svg>
+);
+
+const HeadphoneIcon = ({ className = "" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="0.75" strokeLinecap="round" className={className}>
+    <path d="M4 14c0-4.418 3.582-8 8-8s8 3.582 8 8v3.5a2.5 2.5 0 0 1-5 0V15a2.5 2.5 0 0 1 5 0M4 14v3.5a2.5 2.5 0 0 0 5 0V15a2.5 2.5 0 0 0-5 0" />
+    <path d="M12 6V3" />
   </svg>
 );
 
@@ -89,7 +115,6 @@ const VolumeControl = ({ isMusic, toggleMusic, isVoice, toggleVoice }: { isMusic
       onClick={(e) => { e.stopPropagation(); toggleMusic(); }}
       className={`p-3 rounded-full border border-stone-800/50 backdrop-blur-md transition-all duration-300 group ${isMusic ? 'text-[#d4af37] bg-stone-900/40 hover:bg-stone-900/60' : 'text-stone-600 bg-transparent hover:text-stone-400 hover:border-stone-700'}`}
       aria-label={isMusic ? "Mute Ambience" : "Enable Ambience"}
-      title="Ambience"
     >
       {isMusic ? (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -110,7 +135,6 @@ const VolumeControl = ({ isMusic, toggleMusic, isVoice, toggleVoice }: { isMusic
       onClick={(e) => { e.stopPropagation(); toggleVoice(); }}
       className={`p-3 rounded-full border border-stone-800/50 backdrop-blur-md transition-all duration-300 group ${isVoice ? 'text-[#d4af37] bg-stone-900/40 hover:bg-stone-900/60' : 'text-stone-600 bg-transparent hover:text-stone-400 hover:border-stone-700'}`}
       aria-label={isVoice ? "Mute Voice" : "Enable Voice"}
-      title="Voice"
     >
       {isVoice ? (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -136,56 +160,26 @@ const MonkAvatar = ({ isSpeaking, isThinking, isEntering }: { isSpeaking: boolea
   const isActive = isSpeaking || isThinking;
   return (
     <div className={`relative w-48 h-48 md:w-64 md:h-64 mx-auto transition-all duration-[4000ms] ${isEntering ? 'monk-entrance' : ''}`}>
-      {/* Dynamic Aura - Soft pulse */}
       <div className={`aura absolute inset-0 rounded-full bg-[#d4af37] transition-all duration-[2000ms] ${isActive ? 'aura-active scale-110 opacity-20' : 'opacity-5 scale-100'}`}></div>
-      
       <svg viewBox="0 0 200 200" className="relative z-10 w-full h-full">
-        {/* Monk Body - Subtle Breath */}
-        <path 
-          className="monk-breathing" 
-          d="M45,170 C45,135 65,110 100,110 C135,110 155,135 155,170 L155,190 L45,190 Z" 
-          fill="#1c1917" 
-          stroke="#292524" 
-          strokeWidth="0.5" 
-        />
-        
-        {/* Head Group - Stable and Still */}
+        <path className="monk-breathing" d="M45,170 C45,135 65,110 100,110 C135,110 155,135 155,170 L155,190 L45,190 Z" fill="#1c1917" stroke="#292524" strokeWidth="0.5" />
         <g>
-          {/* Head base shape */}
           <circle cx="100" cy="75" r="32" fill="#0c0a09" stroke="#1c1917" strokeWidth="0.5" />
-          
-          {/* Facial Features Group - More subtle and peaceful */}
           <g className="transition-all duration-[2000ms]" style={{ opacity: isActive ? 0.8 : 0.2 }}>
-             {/* The Urna (spiritual dot) */}
              <circle cx="100" cy="62" r="1.2" fill="#d4af37" opacity="0.4" />
-             
-             {/* Rested Eyes - Flatter, narrower arcs for deeper peace */}
              <path d="M85,76 Q91,77.5 97,76" fill="none" stroke="#d4af37" strokeWidth="0.6" strokeLinecap="round" />
              <path d="M103,76 Q109,77.5 115,76" fill="none" stroke="#d4af37" strokeWidth="0.6" strokeLinecap="round" />
-             
-             {/* The Kind Smile - Barely curved, very subtle hint */}
-             <path 
-               d="M94,90 Q100,92.5 106,90" 
-               fill="none" 
-               stroke="#d4af37" 
-               strokeWidth="0.5" 
-               strokeLinecap="round"
-             />
-
-             {/* Extremely subtle warmth cheeks */}
+             <path d="M94,90 Q100,92.5 106,90" fill="none" stroke="#d4af37" strokeWidth="0.5" strokeLinecap="round" />
              <circle cx="86" cy="86" r="3" fill="#d4af37" opacity={isActive ? 0.05 : 0} />
              <circle cx="114" cy="86" r="3" fill="#d4af37" opacity={isActive ? 0.05 : 0} />
           </g>
         </g>
-        
-        {/* Subtle Robe fold */}
         <path d="M88,130 Q100,126 112,130" fill="none" stroke="#1c1917" strokeWidth="0.8" opacity="0.1" />
       </svg>
     </div>
   );
 };
 
-// Removed onUpdate to prevent auto-scrolling during typing
 const TypewriterText = ({ text, onComplete }: { text: string; onComplete?: () => void }) => {
   const [displayedText, setDisplayedText] = useState("");
   const [index, setIndex] = useState(0);
@@ -198,7 +192,7 @@ const TypewriterText = ({ text, onComplete }: { text: string; onComplete?: () =>
       const timeout = setTimeout(() => {
         setDisplayedText(text.substring(0, index + 1));
         setIndex(prev => prev + 1);
-      }, 30); // Slightly faster for better reading flow
+      }, 30);
       return () => clearTimeout(timeout);
     } else if (onCompleteRef.current) {
       onCompleteRef.current();
@@ -220,12 +214,13 @@ type Message = {
   isNew?: boolean;
 };
 
-type LoadingPhase = 'headphones' | 'wisdom' | 'entering' | 'done';
+// Phases for cinematic intro
+type LoadingPhase = 'init' | 'logo-waiting' | 'logo-bloom' | 'shift-and-quote' | 'reveal-instruction' | 'entering' | 'done';
 
 const App = () => {
-  const [loadingPhase, setLoadingPhase] = useState<LoadingPhase>('headphones');
+  const [loadingPhase, setLoadingPhase] = useState<LoadingPhase>('init');
   const [isOverlayFading, setIsOverlayFading] = useState(false);
-  const [loadingQuote, setLoadingQuote] = useState("");
+  const [loadingQuote, setLoadingQuote] = useState<{ text: string, source: string } | null>(null);
   const [isMonkEntering, setIsMonkEntering] = useState(false);
   const [isSettled, setIsSettled] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -270,7 +265,6 @@ const App = () => {
         osc.start();
       };
 
-      // Frequencies for a meditative, grounding drone
       createOsc(65.41, 'sine', 0.08); 
       createOsc(130.81, 'sine', 0.06);
       createOsc(196.00, 'sine', 0.04);
@@ -333,7 +327,7 @@ const App = () => {
     if (!ambientContextRef.current || !isMusicEnabled) return;
     const ctx = ambientContextRef.current;
     const now = ctx.currentTime;
-    const baseFreq = 82.41; // E2
+    const baseFreq = 82.41;
     [1, 1.5, 2, 3].forEach((ratio, i) => {
       const osc = ctx.createOscillator();
       const g = ctx.createGain();
@@ -359,23 +353,26 @@ const App = () => {
     });
   }, [isMusicEnabled]);
 
-  const handleInitialClick = () => {
-    if (loadingPhase !== 'headphones') return;
+  const startIntroSequence = () => {
+    if (loadingPhase !== 'init') return;
     if (audioContext.state === 'suspended') audioContext.resume();
     setupAmbientMusic();
     strikeZenBell(0.8);
-    setLoadingPhase('wisdom');
+    setLoadingPhase('logo-waiting');
+    
+    setTimeout(() => {
+      setLoadingPhase('logo-bloom');
+      setTimeout(() => {
+        setLoadingPhase('shift-and-quote');
+        setTimeout(() => {
+          setLoadingPhase('reveal-instruction');
+        }, 5000);
+      }, 2000);
+    }, 1200); 
   };
 
-  const scrollToBottom = useCallback((behavior: ScrollBehavior = "smooth") => {
-    if (scrollRef.current) {
-      const container = scrollRef.current;
-      container.scrollTo({ top: container.scrollHeight, behavior });
-    }
-  }, []);
-
   const enterSanctuary = useCallback(() => {
-    if (loadingPhase !== 'wisdom') return;
+    if (loadingPhase !== 'reveal-instruction') return;
     setLoadingPhase('entering');
     if (audioContext.state === 'suspended') audioContext.resume();
     strikeZenBell(1.2); 
@@ -383,19 +380,17 @@ const App = () => {
     setupAmbientMusic();
     if (ambientContextRef.current && ambientGainRef.current) {
       if (ambientContextRef.current.state === 'suspended') ambientContextRef.current.resume();
-      // Only fade in if music is enabled
       const targetGain = isMusicEnabled ? 0.4 : 0;
       ambientGainRef.current.gain.setTargetAtTime(targetGain, ambientContextRef.current.currentTime, 4);
-      
       if (!bowlTimerRef.current) {
         strikeBowl();
         bowlTimerRef.current = window.setInterval(strikeBowl, 20000);
       }
     }
     const sequence = async () => {
-      await new Promise(r => setTimeout(r, 1000));
+      await new Promise(r => setTimeout(r, 1200));
       setIsOverlayFading(true);
-      await new Promise(r => setTimeout(r, 600));
+      await new Promise(r => setTimeout(r, 800));
       setIsMonkEntering(true);
       await new Promise(r => setTimeout(r, 1000));
       setLoadingPhase('done');
@@ -407,73 +402,24 @@ const App = () => {
     sequence();
   }, [loadingPhase, setupAmbientMusic, strikeBowl, strikeZenBell, playMonasticChant, isMusicEnabled]);
 
-  // Handle Music Toggle Fade
-  useEffect(() => {
-    if (!ambientContextRef.current || !ambientGainRef.current) return;
-    const ctx = ambientContextRef.current;
-    const gain = ambientGainRef.current.gain;
-    const now = ctx.currentTime;
-
-    if (isMusicEnabled) {
-      if (ctx.state === 'suspended') ctx.resume();
-      gain.cancelScheduledValues(now);
-      gain.setTargetAtTime(0.4, now, 2); 
-    } else {
-      gain.cancelScheduledValues(now);
-      gain.setTargetAtTime(0, now, 0.5);
-    }
-  }, [isMusicEnabled]);
-
-  const stopAudio = useCallback(() => {
-    if (currentAudioSource) {
-      try { currentAudioSource.stop(); } catch (e) {}
-      setCurrentAudioSource(null);
-    }
-    setMessages(prev => prev.map(m => ({...m, isPlaying: false})));
-    setIsSpeaking(false);
-  }, [currentAudioSource]);
-
-  // Handle Voice Toggle
-  useEffect(() => {
-    if (!isAudioEnabled) {
-      stopAudio();
-    }
-  }, [isAudioEnabled, stopAudio]);
-
   useEffect(() => {
     setLoadingQuote(LOADING_QUOTES[Math.floor(Math.random() * LOADING_QUOTES.length)]);
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     chatRef.current = ai.chats.create({
       model: 'gemini-3-flash-preview',
       config: {
-        // Updated System Instruction: Enlightened Buddhist Monk.
         systemInstruction: `You are an enlightened Buddhist monk. 
-        You have lived many lives in contemplation and have arrived at a place of deep, all-encompassing understanding.
-        You do not try to fix people; you simply see them and the nature of their struggles with absolute clarity and compassion.
-        
-        Guidelines:
-        - Speak as a human who has transcended the noise, not as a tool or a therapist.
-        - Your wisdom is vast, yet your words are simple.
-        - You address the root of the matter, often seeing what the user cannot yet see.
-        - Avoid modern psychological jargon. Use the language of the heart and the spirit.
-        - Use **bold** for profound truths.
-        - Use *italics* for gentle emphasis.
-        - Keep responses concise, like a stone dropping into a still pond.`,
+        Speak as a human who has transcended the noise. Simple, concise, heart-centered.
+        Use **bold** for profound truths. Use *italics* for gentle emphasis.`,
       }
     });
   }, []);
 
-  // Fixed Scroll Logic: Only scroll to bottom when a NEW message is added
-  useEffect(() => {
-    if (messages.length > 0 && isSettled) {
-       scrollToBottom("smooth");
-    }
-  }, [messages.length, isSettled, scrollToBottom]);
-
   const playTTS = useCallback(async (text: string, msgId: string, isAuto: boolean = false) => {
     if (isAuto && !isAudioEnabled) return;
     if (audioContext.state === 'suspended') await audioContext.resume();
-    stopAudio();
+    if (currentAudioSource) { try { currentAudioSource.stop(); } catch (e) {} }
+
     setMessages(prev => prev.map(m => m.id === msgId ? { ...m, isPlaying: true } : m));
     setIsSpeaking(true);
     try {
@@ -483,31 +429,20 @@ const App = () => {
         contents: [{ parts: [{ text: text }] }],
         config: {
           responseModalities: [Modality.AUDIO],
-          // 'Charon' is a deep, calm, and resonant voice suitable for a monk.
           speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Charon' } } },
         },
       });
       const base64Audio = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
       if (!base64Audio) throw new Error("Audio failed");
       const audioBuffer = await decodeAudioData(decodeBase64(base64Audio), audioContext);
-      
-      // Create source
       const source = audioContext.createBufferSource();
       source.buffer = audioBuffer;
-      
-      // 1. Reset speed to 1x
-      source.playbackRate.value = 1.0; 
-
-      // 2. Create a Low-shelf filter to boost bass frequencies
       const bassFilter = audioContext.createBiquadFilter();
       bassFilter.type = 'lowshelf';
-      bassFilter.frequency.value = 200; // Boost frequencies below 200Hz
-      bassFilter.gain.value = 8;        // Boost by 8 decibels
-
-      // Connect nodes: Source -> Filter -> Destination
+      bassFilter.frequency.value = 200;
+      bassFilter.gain.value = 8;
       source.connect(bassFilter);
       bassFilter.connect(audioContext.destination);
-
       source.onended = () => {
         setMessages(prev => prev.map(m => m.id === msgId ? { ...m, isPlaying: false } : m));
         setIsSpeaking(false);
@@ -520,40 +455,27 @@ const App = () => {
       setIsSpeaking(false);
       setMessages(prev => prev.map(m => m.id === msgId ? { ...m, isPlaying: false } : m));
     }
-  }, [isAudioEnabled, stopAudio]);
+  }, [isAudioEnabled, currentAudioSource]);
 
   const handleSend = async () => {
     if (!input.trim() || isThinking || !isSettled) return;
-    stopAudio();
     strikeZenBell(1.1);
     const userMsg: Message = { id: Date.now().toString(), role: 'user', text: input };
     setMessages(prev => [...prev, userMsg]);
     setInput("");
     setIsThinking(true);
-    // Monk "listens"
-    
     try {
       const result = await chatRef.current.sendMessageStream({ message: input });
       const modelMsgId = (Date.now() + 1).toString();
       let fullText = "";
       setMessages(prev => [...prev, { id: modelMsgId, role: 'model', text: "", isNew: true }]);
-      
-      // Start 'speaking' visual state as soon as we start receiving text
       setIsSpeaking(true);
-
       for await (const chunk of result) {
         fullText += chunk.text;
         setMessages(prev => prev.map(msg => msg.id === modelMsgId ? { ...msg, text: fullText } : msg));
       }
-      
-      // Once text is done, if auto-audio is on, play it. 
-      // Note: isSpeaking stays true until audio finishes or we set it false here if audio disabled
-      if (isAudioEnabled) {
-         playTTS(fullText, modelMsgId, true);
-      } else {
-         setIsSpeaking(false);
-      }
-
+      if (isAudioEnabled) playTTS(fullText, modelMsgId, true);
+      else setIsSpeaking(false);
     } catch (e) {
       console.error(e);
       setIsSpeaking(false);
@@ -563,10 +485,23 @@ const App = () => {
     }
   };
 
+  const handleOverlayClick = () => {
+    if (loadingPhase === 'init') startIntroSequence();
+    else if (loadingPhase === 'reveal-instruction') enterSanctuary();
+  };
+
+  const isLogoVisible = ['logo-bloom', 'shift-and-quote', 'reveal-instruction', 'entering'].includes(loadingPhase);
+  const isQuoteVisible = ['shift-and-quote', 'reveal-instruction', 'entering'].includes(loadingPhase);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages, isThinking]);
+
   return (
-    <div className="h-[100dvh] w-full flex flex-col bg-[#12100e] relative overflow-hidden" onClick={() => { if (loadingPhase === 'headphones') handleInitialClick(); else if (loadingPhase === 'wisdom') enterSanctuary(); }}>
+    <div className="h-[100dvh] w-full flex flex-col bg-[#12100e] relative overflow-hidden site-entrance" onClick={handleOverlayClick}>
       
-      {/* Top Right Controls - Visible when settled */}
       {isSettled && (
         <VolumeControl 
           isMusic={isMusicEnabled} 
@@ -578,30 +513,50 @@ const App = () => {
 
       {loadingPhase !== 'done' && (
         <div className={`fixed inset-0 z-[100] bg-[#12100e] flex flex-col items-center justify-center transition-opacity duration-[2000ms] ${isOverlayFading ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
-          <div className="absolute inset-0 bg-radial-glow opacity-30 pointer-events-none" />
-          <div className={`flex flex-col items-center justify-center w-full px-8 transition-all duration-1000 ${loadingPhase === 'headphones' ? 'opacity-100' : 'opacity-0 absolute'}`}>
+          <div className="absolute inset-0 bg-radial-glow opacity-10 pointer-events-none" />
+          
+          <div className={`flex flex-col items-center justify-center w-full h-full px-8 transition-opacity duration-[1000ms] ${loadingPhase === 'init' ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
              <div className="headphones-visual mb-12 flex items-center justify-center">
-                <div className="circle-ring ring-1" />
-                <div className="circle-ring ring-2" />
-                <div className="circle-ring ring-3" />
+                <div className="ripple ripple-1" />
+                <div className="ripple ripple-2" />
+                <div className="ripple ripple-3" />
+                <div className="ripple ripple-4" />
                 <div className="relative z-10 w-20 h-20 text-[#d4af37] opacity-60">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
-                       <path d="M3 18v-6c0-5 4-9 9-9s9 4 9 9v6M3 18h4v4H3v-4zm14 0h4v4h-4v-4z" />
-                    </svg>
+                   <HeadphoneIcon className="w-full h-full" />
                 </div>
              </div>
-             <div className="text-center">
-               <p className="text-[#d4af37] font-serif text-sm tracking-[0.5em] uppercase mb-4 opacity-90 drop-shadow-md">The Silent Temple</p>
-               <button className="mt-12 px-8 py-3 border border-stone-700 text-stone-500 text-[9px] uppercase tracking-[0.6em] rounded-full hover:border-[#d4af37]/50 hover:text-stone-300 transition-all duration-700 bg-stone-900/40 backdrop-blur-sm">Enter Silence</button>
-             </div>
+             <p className="text-stone-400 text-[10px] sm:text-xs uppercase tracking-[0.2em] font-light mb-16 opacity-80 text-center">Please wear headphones for the best experience</p>
+             <button className="px-12 py-4 border border-stone-800 text-stone-300 text-[10px] uppercase tracking-[0.4em] rounded-full hover:border-[#d4af37]/40 hover:text-stone-100 transition-all duration-700 bg-stone-900/40 backdrop-blur-md shadow-2xl">
+               Begin
+             </button>
           </div>
 
-          <div className={`flex flex-col items-center justify-center w-full px-8 transition-all duration-1000 ${loadingPhase === 'wisdom' || loadingPhase === 'entering' ? 'opacity-100 scale-100' : 'opacity-0 scale-95 absolute'}`}>
-            <LotusIcon size={80} className="animate-lotus" />
-            <p className="mt-12 text-stone-500 font-serif text-lg md:text-xl text-center max-w-lg italic tracking-wide leading-relaxed">"{loadingQuote}"</p>
-            {loadingPhase === 'wisdom' && (
-              <span className="mt-20 text-[10px] uppercase tracking-[0.5em] text-stone-400 font-medium animate-pulse cursor-pointer hover:text-stone-200 transition-colors">Tap to Step Inside</span>
-            )}
+          <div className={`absolute inset-0 flex flex-col items-center justify-center transition-opacity duration-1000 ${isLogoVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+            
+            <div className={`absolute flex flex-col items-center justify-center translate-y-[-140px] transition-all duration-1000 ${loadingPhase === 'entering' ? 'scale-95 opacity-80' : ''}`}>
+              <div className="relative mb-8">
+                 <div className={`absolute inset-0 bg-[#d4af37] blur-[60px] rounded-full scale-[2.5] transition-opacity duration-1000 ${loadingPhase === 'entering' ? 'opacity-0' : 'opacity-25'}`} />
+                 <LotusIcon size={90} className="relative z-10" isErasing={loadingPhase === 'entering'} />
+              </div>
+              <h1 className={`text-[#d4af37] font-serif text-lg sm:text-xl tracking-[0.2em] sm:tracking-[0.5em] uppercase drop-shadow-lg text-center whitespace-nowrap transition-all duration-[1200ms] ${loadingPhase === 'entering' ? 'opacity-0 tracking-[0.8em]' : 'opacity-100'}`}>
+                The Silent Temple
+              </h1>
+            </div>
+
+            <div className={`max-w-xl px-12 text-center transition-all duration-[2000ms] mt-32 flex flex-col gap-4 ${isQuoteVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'} ${loadingPhase === 'entering' ? 'opacity-0 scale-105' : ''}`}>
+               <p className="text-stone-500 font-serif text-lg md:text-xl italic tracking-wide leading-relaxed">
+                 "{loadingQuote?.text}"
+               </p>
+               <span className="text-stone-700 font-serif text-sm tracking-[0.1em] opacity-80">
+                 — {loadingQuote?.source}
+               </span>
+            </div>
+
+            <div className={`absolute bottom-24 transition-all duration-[1000ms] ${loadingPhase === 'reveal-instruction' ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+               <span className="text-[10px] uppercase tracking-[0.6em] text-[#d4af37] font-medium animate-pulse cursor-pointer">
+                 Tap to step inside
+               </span>
+            </div>
           </div>
         </div>
       )}
@@ -640,7 +595,7 @@ const App = () => {
           </div>
         ))}
         {isThinking && <div className="flex justify-start items-center gap-3 opacity-30 text-stone-700 italic font-light text-[9px] tracking-[0.4em] uppercase animate-pulse">Reflecting...</div>}
-        <div className="h-20" /> {/* Smaller padding at bottom */}
+        <div className="h-20" />
       </main>
 
       <footer className="flex-shrink-0 p-8 md:p-12 bg-gradient-to-t from-[#12100e] via-[#12100e]/98 to-transparent relative z-30" onClick={(e) => e.stopPropagation()}>
