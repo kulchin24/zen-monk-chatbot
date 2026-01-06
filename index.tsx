@@ -221,8 +221,29 @@ const ChatIcon = ({ className = "" }: { className?: string }) => (
   </svg>
 );
 
-const VolumeControl = ({ isMusic, toggleMusic, isVoice, toggleVoice, hidden }: { isMusic: boolean, toggleMusic: () => void, isVoice: boolean, toggleVoice: () => void, hidden?: boolean }) => (
+const HeaderControls = ({ 
+  isMusic, toggleMusic, 
+  isVoice, toggleVoice, 
+  onAboutClick,
+  hidden 
+}: { 
+  isMusic: boolean, toggleMusic: () => void, 
+  isVoice: boolean, toggleVoice: () => void, 
+  onAboutClick: () => void,
+  hidden?: boolean 
+}) => (
   <div className={`absolute top-[calc(1rem+env(safe-area-inset-top))] right-4 z-50 flex gap-3 transition-all duration-1000 animate-in fade-in zoom-in-95 ${hidden ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+    
+    <button 
+      onClick={(e) => { e.stopPropagation(); onAboutClick(); }}
+      className="p-3 rounded-full border border-stone-800/50 backdrop-blur-md transition-all duration-300 group text-stone-600 bg-transparent hover:text-[#d4af37] hover:border-[#d4af37]/50"
+      aria-label="About"
+    >
+        <span className="font-serif italic font-bold text-lg leading-none w-4 h-4 flex items-center justify-center">i</span>
+    </button>
+    
+    <div className="w-[1px] h-10 bg-stone-800/50 mx-1" />
+
     <button 
       onClick={(e) => { e.stopPropagation(); toggleMusic(); }}
       className={`p-3 rounded-full border border-stone-800/50 backdrop-blur-md transition-all duration-300 group ${isMusic ? 'text-[#d4af37] bg-stone-900/40 hover:bg-stone-900/60' : 'text-stone-600 bg-transparent hover:text-stone-400 hover:border-stone-700'}`}
@@ -265,6 +286,70 @@ const VolumeControl = ({ isMusic, toggleMusic, isVoice, toggleVoice, hidden }: {
         </svg>
       )}
     </button>
+  </div>
+);
+
+const AboutModal = ({ onClose }: { onClose: () => void }) => (
+  <div 
+    className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-xl animate-in fade-in duration-500"
+    onClick={onClose}
+  >
+    <div 
+      className="relative w-[90%] md:w-[80%] max-w-2xl max-h-[85vh] overflow-y-auto p-8 md:p-12 bg-[#12100e]/80 border border-stone-800/50 shadow-2xl rounded-sm scrollbar-hide"
+      onClick={e => e.stopPropagation()}
+    >
+      <button 
+        onClick={onClose}
+        className="absolute top-6 right-6 text-stone-500 hover:text-[#d4af37] transition-colors"
+      >
+        <XIcon className="w-6 h-6" />
+      </button>
+
+      <div className="flex flex-col items-center text-center font-serif text-stone-300 space-y-10">
+        
+        {/* Heading */}
+        <div>
+           <div className="w-16 h-16 mx-auto mb-6 text-[#d4af37] opacity-80">
+              <LotusIcon size={64} />
+           </div>
+           <h2 className="text-2xl md:text-3xl text-[#d4af37] tracking-[0.2em] uppercase">The Silent Temple</h2>
+        </div>
+
+        {/* Core Features */}
+        <div className="space-y-4 w-full border-b border-stone-800/50 pb-8">
+           <div>
+              <h3 className="text-[#d4af37] text-sm uppercase tracking-widest mb-1 opacity-90">The Chat</h3>
+              <p className="text-stone-400 italic font-light">"A mirror for your thoughts. Guided by wisdom."</p>
+           </div>
+           <div>
+              <h3 className="text-[#d4af37] text-sm uppercase tracking-widest mb-1 opacity-90">The Burner Journal</h3>
+              <p className="text-stone-400 italic font-light">"An offering to the fire. Write and release."</p>
+           </div>
+           <div>
+              <h3 className="text-[#d4af37] text-sm uppercase tracking-widest mb-1 opacity-90">Privacy</h3>
+              <p className="text-stone-400 italic font-light">"The soul is not a data point. Everything remains local."</p>
+           </div>
+        </div>
+
+        {/* Philosophy */}
+        <div className="space-y-6 text-sm md:text-base leading-[1.8] font-light text-stone-300/90 text-justify md:text-center">
+            <p>
+              In an era of digital permanence, the mind deserves a space for the ephemeral. Most modern tools are built to hoard thought, creating a heavy archive of past selves that anchors the spirit to the yesterday. Zen Monk exists as a necessary rebellion—an architecture of absence designed to return the individual to the stillness that exists before the noise of the world intervenes.
+            </p>
+            <p>
+              The practice begins with the removal of expectation. Anxiety lives in the 'what-if'—the attachment to a specific outcome or a future that has not yet arrived. By entering this space with no demand for a result, the mind is finally free to let go. True clarity is found not by seeking an answer, but by surrendering the need for one.
+            </p>
+            <p>
+              Growth is found in the shedding of burdens, not the collection of them. This space is a digital cloister where thoughts are given to the fire so that the spirit may remain light, unburdened, and entirely present. It is a reminder that while the world is loud, the center is always still.
+            </p>
+        </div>
+
+        <div className="pt-4 opacity-50">
+             <span className="text-xs uppercase tracking-[0.3em]">Yours</span>
+        </div>
+
+      </div>
+    </div>
   </div>
 );
 
@@ -747,7 +832,7 @@ const BurnerJournalView = ({ isAudioEnabled }: { isAudioEnabled: boolean }) => {
         <h2 className="text-[#d4af37] font-serif text-xl tracking-[0.2em] uppercase opacity-80 mb-2">The Burner</h2>
         <div className="w-12 h-[1px] bg-stone-800 mx-auto" />
         <p className="text-stone-600 text-xs mt-4 tracking-widest uppercase">
-            {mode === 'essay' ? "A Thought" : "Release your burdens into the void"}
+            {mode === 'essay' ? "Insight" : "Release your burdens into the void"}
         </p>
       </div>
 
@@ -867,6 +952,7 @@ const App = () => {
   const [isTransitioning, setIsTransitioning] = useState(false);
   // New global state for immersion
   const [isImmersive, setIsImmersive] = useState(false);
+  const [showAbout, setShowAbout] = useState(false);
   
   const chatRef = useRef<any>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -1412,14 +1498,17 @@ const App = () => {
     >
       
       {isSettled && (
-        <VolumeControl 
+        <HeaderControls 
           isMusic={isMusicEnabled} 
           toggleMusic={() => setIsMusicEnabled(prev => !prev)}
           isVoice={isAudioEnabled}
           toggleVoice={() => setIsAudioEnabled(prev => !prev)}
+          onAboutClick={() => setShowAbout(true)}
           hidden={isImmersive}
         />
       )}
+
+      {showAbout && <AboutModal onClose={() => setShowAbout(false)} />}
 
       {loadingPhase !== 'done' && (
         <div className={`fixed inset-0 z-[100] bg-[#12100e] flex flex-col items-center justify-center overflow-hidden transition-opacity duration-[2000ms] ${isOverlayFading ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
