@@ -208,7 +208,7 @@ const ChatIcon = ({ className = "" }: { className?: string }) => (
 );
 
 const VolumeControl = ({ isMusic, toggleMusic, isVoice, toggleVoice, hidden }: { isMusic: boolean, toggleMusic: () => void, isVoice: boolean, toggleVoice: () => void, hidden?: boolean }) => (
-  <div className={`absolute top-4 right-4 z-50 flex gap-3 transition-all duration-1000 animate-in fade-in zoom-in-95 ${hidden ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+  <div className={`absolute top-[calc(1rem+env(safe-area-inset-top))] right-4 z-50 flex gap-3 transition-all duration-1000 animate-in fade-in zoom-in-95 ${hidden ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
     <button 
       onClick={(e) => { e.stopPropagation(); toggleMusic(); }}
       className={`p-3 rounded-full border border-stone-800/50 backdrop-blur-md transition-all duration-300 group ${isMusic ? 'text-[#d4af37] bg-stone-900/40 hover:bg-stone-900/60' : 'text-stone-600 bg-transparent hover:text-stone-400 hover:border-stone-700'}`}
@@ -1261,7 +1261,7 @@ const App = () => {
 
   return (
     <div 
-      className="fixed inset-0 w-full h-[100dvh] flex flex-col bg-[#12100e] text-stone-300 overflow-hidden site-entrance" 
+      className="fixed inset-0 w-full h-full flex flex-col bg-[#12100e] text-stone-300 overflow-hidden site-entrance" 
       onClick={handleOverlayClick}
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
@@ -1438,7 +1438,7 @@ const App = () => {
 
       {/* Chat Input Footer - Only visible in Chat Mode */}
       {viewMode === 'chat' && (
-        <footer className={`flex-shrink-0 px-4 pt-4 pb-[calc(1rem+env(safe-area-inset-bottom))] md:p-12 bg-gradient-to-t from-[#12100e] via-[#12100e]/98 to-transparent relative z-30 transition-all duration-500 ${isTransitioning ? 'opacity-0 translate-y-10' : 'opacity-100 translate-y-0'}`} onClick={(e) => e.stopPropagation()}>
+        <footer className={`flex-shrink-0 px-4 pt-4 pb-[env(safe-area-inset-bottom)] md:p-12 bg-gradient-to-t from-[#12100e] via-[#12100e]/98 to-transparent relative z-30 transition-all duration-500 ${isTransitioning ? 'opacity-0 translate-y-10' : 'opacity-100 translate-y-0'}`} onClick={(e) => e.stopPropagation()}>
           
           {/* Attachment Preview */}
           {attachedImage && (
