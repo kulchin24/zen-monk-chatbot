@@ -747,7 +747,7 @@ const BurnerJournalView = ({ isAudioEnabled }: { isAudioEnabled: boolean }) => {
         <h2 className="text-[#d4af37] font-serif text-xl tracking-[0.2em] uppercase opacity-80 mb-2">The Burner</h2>
         <div className="w-12 h-[1px] bg-stone-800 mx-auto" />
         <p className="text-stone-600 text-xs mt-4 tracking-widest uppercase">
-            {mode === 'essay' ? "Insight" : "Release your burdens into the void"}
+            {mode === 'essay' ? "A Thought" : "Release your burdens into the void"}
         </p>
       </div>
 
