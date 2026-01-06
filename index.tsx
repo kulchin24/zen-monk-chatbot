@@ -655,7 +655,7 @@ const BreathingView = ({ isActive, setBreathingAudioActive, onImmersiveChange }:
                             <span className="text-[#d4af37] text-xs opacity-60">Box Breathing</span>
                         </div>
                         <p className="text-stone-500 text-xs leading-relaxed font-light">
-                            Equalizes the breath to heighten performance and concentration. Inhale, hold, exhale, and hold empty for equal counts of 4. Used to reset the mind.
+                            Equalizes the breath to heighten performance and concentration. Inhale, hold, exhale, and hold empty for equal counts of4. Used to reset the mind.
                         </p>
                     </div>
                 </div>
@@ -1261,7 +1261,7 @@ const App = () => {
 
   return (
     <div 
-      className="h-[100dvh] w-full flex flex-col bg-[#12100e] relative overflow-hidden site-entrance" 
+      className="fixed inset-0 w-full h-[100dvh] flex flex-col bg-[#12100e] text-stone-300 overflow-hidden site-entrance" 
       onClick={handleOverlayClick}
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
@@ -1328,7 +1328,7 @@ const App = () => {
         </div>
       )}
 
-      <header className={`flex-shrink-0 relative flex flex-col items-center justify-end transition-all duration-1000 temple-glow border-b border-stone-900/40 
+      <header className={`flex-shrink-0 relative flex flex-col items-center justify-end transition-all duration-1000 temple-glow border-b border-stone-900/40 pt-[env(safe-area-inset-top)] 
         ${isImmersive ? 'h-0 opacity-0 overflow-hidden' : (viewMode === 'chat' ? 'h-[25vh] md:h-[35vh] pb-2' : 'h-[20vh] md:h-[25vh] pb-2')}`}>
         <div className="absolute inset-x-0 bottom-0 h-[1px] bg-gradient-to-r from-transparent via-stone-800/20 to-transparent" />
         {(isMonkEntering || isSettled) && (
@@ -1380,7 +1380,7 @@ const App = () => {
         )}
       </header>
 
-      <main ref={scrollRef} className="flex-grow overflow-y-auto px-6 md:px-12 py-8 md:py-12 w-full max-w-3xl mx-auto temple-floor scroll-smooth relative">
+      <main ref={scrollRef} className="flex-1 overflow-y-auto px-6 md:px-12 py-8 md:py-12 w-full max-w-3xl mx-auto temple-floor scroll-smooth relative overscroll-y-contain">
         <div className={`transition-all duration-500 ease-in-out h-full ${isTransitioning ? 'opacity-0 translate-y-4 filter blur-sm' : 'opacity-100 translate-y-0 filter blur-0'}`}>
             {viewMode === 'chat' && (
               <div className="space-y-12 md:space-y-16">
@@ -1438,7 +1438,7 @@ const App = () => {
 
       {/* Chat Input Footer - Only visible in Chat Mode */}
       {viewMode === 'chat' && (
-        <footer className={`flex-shrink-0 p-4 md:p-12 bg-gradient-to-t from-[#12100e] via-[#12100e]/98 to-transparent relative z-30 transition-all duration-500 ${isTransitioning ? 'opacity-0 translate-y-10' : 'opacity-100 translate-y-0'}`} onClick={(e) => e.stopPropagation()}>
+        <footer className={`flex-shrink-0 px-4 pt-4 pb-[calc(1rem+env(safe-area-inset-bottom))] md:p-12 bg-gradient-to-t from-[#12100e] via-[#12100e]/98 to-transparent relative z-30 transition-all duration-500 ${isTransitioning ? 'opacity-0 translate-y-10' : 'opacity-100 translate-y-0'}`} onClick={(e) => e.stopPropagation()}>
           
           {/* Attachment Preview */}
           {attachedImage && (
