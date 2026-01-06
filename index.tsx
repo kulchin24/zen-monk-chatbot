@@ -12,31 +12,46 @@ const LOADING_QUOTES = [
   { text: "Mind precedes all mental states. Mind is their chief; they are all mind-wrought.", source: "Buddha, Dhammapada, Verse 1" },
 ];
 
-const SUTRA_LIBRARY = [
+const JOURNAL_ESSAYS = [
   {
-    title: "The Heart Sutra (Excerpt)",
-    text: "Form is emptiness, emptiness is form. Form is not other than emptiness, emptiness is not other than form. The same is true with feelings, perceptions, mental formations, and consciousness. \n\nTherefore, in emptiness there is no form, no feeling, no perception, no mental formations, no consciousness; no eye, no ear, no nose, no tongue, no body, no mind; no color, no sound, no smell, no taste, no touch, no object of mind...",
-    source: "Prajñāpāramitā Hṛdaya"
+    title: "The Empty Cup",
+    text: "To fill a cup that is already full is impossible. By releasing these thoughts, you have not lost anything; you have simply poured out the old tea. The space you feel right now is not emptiness—it is potential. It is room for the new moment to enter. Enjoy this lightness. The heavy lifting is done."
   },
   {
-    title: "The Metta Sutta (Loving-Kindness)",
-    text: "May all beings be happy and safe. May they have happy minds.\n\nWhatever living beings there may be; whether they are weak or strong, omitting none, the great or the mighty, medium, short or small, the seen and the unseen, those living near and far away, those born and to-be-born—May all beings be at ease.\n\nLet none deceive another, or despise any being in any state. Let none through anger or ill-will wish harm upon another.",
-    source: "Sutta Nipata 1.8"
+    title: "The Heavy Backpack",
+    text: "Imagine you have been hiking up a mountain carrying a backpack full of stones. Every worry you just wrote down was a stone. You have just set the bag down on the side of the trail. Your shoulders are lighter. Your breath is deeper. You can walk forward now without that weight pulling you backward. You are free to move."
   },
   {
-    title: "On Anger",
-    text: "He abused me, he struck me, he overpowered me, he robbed me. Those who harbor such thoughts do not still their hatred.\n\nHe abused me, he struck me, he overpowered me, he robbed me. Those who do not harbor such thoughts still their hatred.\n\nHatred is never appeased by hatred in this world; by non-hatred alone is hatred appeased. This is a law eternal.",
-    source: "Dhammapada v. 3-5"
+    title: "Mental RAM",
+    text: "Your mind is a processor, not a storage unit. When you hold onto these loops, they run in the background, consuming your energy and slowing you down. By writing them and burning them, you have closed those tabs. The process is terminated. Your system is clear. You have permission to focus only on what is right in front of you."
   },
   {
-    title: "The Arrow",
-    text: "When touched with a feeling of pain, the uninstructed run-of-the-mill person sorrows, grieves, and laments, beats his breast, becomes distraught. So he feels two pains, physical and mental. Just as if they were to shoot a man with an arrow and, right afterward, were to shoot him with another one, so that he would feel the pain of two arrows.",
-    source: "Sallatha Sutta"
+    title: "The River",
+    text: "A river does not try to hold onto the water that flows past it. If it did, it would become a stagnant swamp. You are the riverbed, and these thoughts are just the water. They have rushed past you, and now they are downstream, drifting toward the ocean. Let them go. Watch them disappear around the bend."
   },
   {
-    title: "The Raft",
-    text: "Suppose a man were traveling along a path. He would see a great expanse of water, with the near shore dubious & risky, the further shore secure & free from risk, but with neither a ferryboat nor a bridge going from this shore to the other. The man would construct a raft... crossing over... he would suppose: 'How useful this raft has been to me... what if I were to hoist it on my head and carry it with me?'... No.\n\nSo it is with the Dhamma: It is for crossing over, not for holding onto.",
-    source: "Alagaddupama Sutta"
+    title: "The Storm",
+    text: "The sky does not apologize for the storm, and it does not hold onto the clouds after they pass. It simply allows the weather to happen, knowing it is vast enough to handle it. You are the sky, not the weather. The thunder has rumbled, the rain has fallen, and now the clouds are breaking. Enjoy the clear blue that remains."
+  },
+  {
+    title: "The Dead Leaves",
+    text: "In a forest, trees do not cling to dead leaves out of nostalgia or fear. They drop them to the forest floor to disintegrate. This shedding is not a loss; it is the only way to survive the winter and prepare for spring. You have just shed a dead leaf. Do not pick it back up. Let it become the soil for your next growth."
+  },
+  {
+    title: "The Clenched Fist",
+    text: "Holding onto anger or worry is like grasping a hot coal with the intent of throwing it at someone else; you are the one who gets burned. It requires immense energy to keep your fist clenched tight. By releasing this text, you have opened your hand. Feel the blood return to your fingers. Feel the energy you just saved."
+  },
+  {
+    title: "The Train Station",
+    text: "Imagine your mind is a busy train station. Thoughts are simply trains pulling in and out. For a long time, you have been jumping onto every train that arrives, letting it take you miles away from where you want to be. Not this time. You just watched the train arrive, and you watched it leave. You are still standing safely on the platform."
+  },
+  {
+    title: "The Editor",
+    text: "We often mistake our anxious thoughts for facts, but they are usually just drafts of a story we are writing in our heads. You are the author, not the character. You just looked at a draft that wasn't working, and you crumpled it up. It is not part of your final story. Turn the page. The next chapter is blank."
+  },
+  {
+    title: "The Glass",
+    text: "If you hold a glass of water for a minute, it is light. If you hold it for an hour, your arm aches. If you hold it all day, you become paralyzed. The weight of the glass doesn't change, but the longer you hold it, the heavier it becomes. You have just put the glass down. Rest your arm. The water is no longer your concern."
   }
 ];
 
@@ -184,10 +199,9 @@ const XIcon = ({ className = "" }: { className?: string }) => (
   </svg>
 );
 
-const BookIcon = ({ className = "" }: { className?: string }) => (
+const FireIcon = ({ className = "" }: { className?: string }) => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+    <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.1.2-2.2.6-3.3a1 1 0 0 0 3 2.8z"/>
   </svg>
 );
 
@@ -666,30 +680,159 @@ const BreathingView = ({ isActive, setBreathingAudioActive, onImmersiveChange }:
   );
 };
 
-const WisdomView = () => (
-  <div className="w-full max-w-2xl mx-auto space-y-8 pb-20 animate-in fade-in slide-in-from-bottom-8 duration-1000">
-    <div className="text-center mb-12">
-      <h2 className="text-[#d4af37] font-serif text-xl tracking-[0.2em] uppercase opacity-80 mb-2">Ancient Wisdom</h2>
-      <div className="w-12 h-[1px] bg-stone-800 mx-auto" />
-    </div>
+const BurnerJournalView = ({ isAudioEnabled }: { isAudioEnabled: boolean }) => {
+  const [text, setText] = useState("");
+  const [mode, setMode] = useState<'idle' | 'burning' | 'essay' | 'reflection'>('idle');
+  const [currentEssay, setCurrentEssay] = useState<typeof JOURNAL_ESSAYS[0] | null>(null);
+
+  const handleBurn = () => {
+    if (!text.trim()) return;
     
-    {SUTRA_LIBRARY.map((sutra, idx) => (
-      <div key={idx} className="bg-stone-900/20 border border-stone-800/30 p-8 rounded-sm hover:border-[#d4af37]/20 transition-all duration-500 group">
-        <h3 className="text-stone-400 font-serif text-lg mb-4 tracking-wide group-hover:text-[#d4af37] transition-colors">
-          {sutra.title}
-        </h3>
-        <p className="text-stone-500 font-light leading-relaxed whitespace-pre-wrap font-serif text-sm md:text-base">
-          {sutra.text}
+    // Select a random essay
+    const essay = JOURNAL_ESSAYS[Math.floor(Math.random() * JOURNAL_ESSAYS.length)];
+    setCurrentEssay(essay);
+
+    // Skip the 'burning' smoke animation phase as requested
+    setMode('essay');
+  };
+
+  const playCompletionMelody = () => {
+    const ctx = audioContext;
+    if (ctx.state === 'suspended') ctx.resume();
+    const now = ctx.currentTime;
+    
+    // Ethereal Harp-like Arpeggio (F Major Add9)
+    // F4, G4, A4, C5, F5
+    const notes = [349.23, 392.00, 440.00, 523.25, 698.46]; 
+    
+    notes.forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.frequency.value = freq;
+        osc.type = 'triangle'; // Softer than sine, but pure enough
+        
+        // Staggered entrance
+        const startTime = now + (i * 0.12);
+        
+        gain.gain.setValueAtTime(0, startTime);
+        gain.gain.linearRampToValueAtTime(0.08, startTime + 0.05); // Gentle attack
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 4); // Long reverb-like tail
+        
+        // Simple Lowpass for warmth
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.value = 1200;
+
+        osc.connect(filter).connect(gain).connect(ctx.destination);
+        osc.start(startTime);
+        osc.stop(startTime + 4.1);
+    });
+  };
+
+  const handleReady = () => {
+    playCompletionMelody();
+    setText(""); // Now we clear the text as the user has committed to releasing it.
+    setMode('reflection');
+  };
+
+  const handleEdit = () => {
+    setMode('idle');
+  };
+
+  return (
+    <div className="w-full h-full flex flex-col items-center justify-start pt-12 md:pt-20 p-6 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+       
+       {/* HEADER */}
+       <div className={`text-center mb-8 transition-all duration-700 ${mode === 'reflection' ? 'opacity-0 h-0 overflow-hidden mb-0' : 'opacity-100'}`}>
+        <h2 className="text-[#d4af37] font-serif text-xl tracking-[0.2em] uppercase opacity-80 mb-2">The Burner</h2>
+        <div className="w-12 h-[1px] bg-stone-800 mx-auto" />
+        <p className="text-stone-600 text-xs mt-4 tracking-widest uppercase">
+            {mode === 'essay' ? "Insight" : "Release your burdens into the void"}
         </p>
-        <div className="mt-6 text-right">
-          <span className="text-[10px] uppercase tracking-[0.15em] text-stone-700">
-            — {sutra.source}
-          </span>
-        </div>
       </div>
-    ))}
-  </div>
-);
+
+      <div className="relative w-full max-w-lg min-h-[400px]">
+        
+        {/* INPUT STATE */}
+        <div className={`transition-all duration-700 ease-in-out w-full
+            ${(mode === 'idle' || mode === 'burning') ? 'opacity-100 relative z-10' : 'opacity-0 absolute inset-0 z-0 pointer-events-none translate-y-8'}`}>
+            <textarea
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                disabled={mode === 'burning'}
+                placeholder="Type out what weighs on you..."
+                className="w-full h-64 bg-stone-900/30 border border-stone-800/50 rounded-sm p-6 text-stone-400 font-serif text-lg italic focus:outline-none focus:border-[#d4af37]/30 transition-all resize-none placeholder-stone-700"
+            />
+            
+            <div className="mt-8 flex justify-center">
+                <button
+                    onClick={handleBurn}
+                    disabled={!text.trim() || mode === 'burning'}
+                    className="px-8 py-3 border border-stone-800 text-stone-500 hover:text-[#d4af37] hover:border-[#d4af37]/50 rounded-full text-xs uppercase tracking-[0.3em] transition-all disabled:opacity-30 disabled:cursor-not-allowed group relative overflow-hidden"
+                >
+                    <span className="relative z-10">Release</span>
+                    <div className="absolute inset-0 bg-[#d4af37]/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500"/>
+                </button>
+            </div>
+        </div>
+
+        {/* ESSAY STATE */}
+        <div className={`transition-all duration-1000 ease-in-out flex flex-col items-center justify-center
+             ${mode === 'essay' ? 'opacity-100 relative translate-y-0' : 'opacity-0 absolute inset-0 pointer-events-none -translate-y-4'}`}>
+             
+             {currentEssay && (
+                 <>
+                    <h3 className="text-stone-400 font-serif text-lg italic mb-6 tracking-wide">
+                        "{currentEssay.title}"
+                    </h3>
+                    <p className="text-stone-300 font-serif text-base md:text-xl leading-loose text-center font-light">
+                        {currentEssay.text}
+                    </p>
+                 </>
+             )}
+
+             <div className="flex gap-4 mt-12">
+                 <button 
+                    onClick={handleEdit}
+                    className="px-6 py-3 border border-stone-800 text-stone-600 hover:text-stone-400 text-[10px] uppercase tracking-widest rounded-full transition-colors"
+                 >
+                     Edit Text
+                 </button>
+                 <button 
+                    onClick={handleReady}
+                    className="px-8 py-3 bg-[#d4af37]/10 border border-[#d4af37]/30 text-[#d4af37] hover:bg-[#d4af37]/20 text-[10px] uppercase tracking-widest rounded-full transition-all shadow-[0_0_15px_rgba(212,175,55,0.1)] hover:shadow-[0_0_25px_rgba(212,175,55,0.2)]"
+                 >
+                     I am ready
+                 </button>
+             </div>
+        </div>
+
+        {/* REFLECTION STATE */}
+        <div className={`transition-all duration-1000 ease-in-out flex flex-col items-center justify-center
+             ${mode === 'reflection' ? 'opacity-100 relative translate-y-0' : 'opacity-0 absolute inset-0 pointer-events-none translate-y-4'}`}>
+             
+             <div className="w-16 h-16 rounded-full bg-[#d4af37]/5 flex items-center justify-center mb-8 animate-pulse">
+                <div className="w-2 h-2 bg-[#d4af37] rounded-full shadow-[0_0_10px_#d4af37]" />
+             </div>
+             
+             <p className="text-stone-400 font-serif text-xl md:text-2xl text-center leading-relaxed max-w-md">
+                 It is time to self reflect.
+                 <br />
+                 <span className="text-[#d4af37] text-lg opacity-80 mt-4 block">Put the phone away for a few minutes.</span>
+             </p>
+
+             <button 
+                onClick={handleEdit}
+                className="mt-16 text-stone-700 hover:text-stone-500 text-[10px] uppercase tracking-[0.2em] transition-colors"
+             >
+                 Begin Again
+             </button>
+        </div>
+
+      </div>
+    </div>
+  );
+};
 
 type Message = {
   id: string;
@@ -702,7 +845,7 @@ type Message = {
 
 // Phases for cinematic intro
 type LoadingPhase = 'init' | 'logo-waiting' | 'logo-bloom' | 'shift-and-quote' | 'reveal-instruction' | 'entering' | 'done';
-type ViewMode = 'chat' | 'breathe' | 'wisdom';
+type ViewMode = 'chat' | 'breathe' | 'journal';
 
 const App = () => {
   const [loadingPhase, setLoadingPhase] = useState<LoadingPhase>('init');
@@ -940,7 +1083,7 @@ const App = () => {
           // Significantly reduced volume for breathing (0.2), and static
           const targetVol = isBreathingActive ? 0.2 : 0.1;
           breathDroneGainRef.current.gain.setTargetAtTime(targetVol, now, transitionTime);
-      } else if (mode === 'wisdom') {
+      } else if (mode === 'journal') {
           templeGainRef.current.gain.setTargetAtTime(0.2, now, transitionTime); 
           breathDroneGainRef.current.gain.setTargetAtTime(0, now, transitionTime);
       }
@@ -1241,11 +1384,11 @@ const App = () => {
 
     if (Math.abs(distanceX) > Math.abs(distanceY)) {
         if (isLeftSwipe) {
-             if (viewMode === 'wisdom') handleModeSwitch('chat');
+             if (viewMode === 'journal') handleModeSwitch('chat');
              else if (viewMode === 'chat') handleModeSwitch('breathe');
         } else if (isRightSwipe) {
              if (viewMode === 'breathe') handleModeSwitch('chat');
-             else if (viewMode === 'chat') handleModeSwitch('wisdom');
+             else if (viewMode === 'chat') handleModeSwitch('journal');
         }
     }
   };
@@ -1343,19 +1486,19 @@ const App = () => {
             ) : (
                 <div className={`mb-2 md:mb-4 text-[#d4af37] opacity-60 transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
                    {viewMode === 'breathe' && <MeditatingFigureIcon className="w-10 h-10 md:w-16 md:h-16" />}
-                   {viewMode === 'wisdom' && <BookIcon className="w-10 h-10 md:w-16 md:h-16" />}
+                   {viewMode === 'journal' && <FireIcon className="w-10 h-10 md:w-16 md:h-16" />}
                 </div>
             )}
             
             {/* Mode Switcher Navigation */}
             <div className={`flex items-center gap-6 mt-2 md:mt-4 transition-all duration-700 ${viewMode === 'chat' ? 'translate-y-0' : 'translate-y-2'}`}>
-               {/* 1. Wisdom (Left) */}
+               {/* 1. Journal (Left) */}
                <button 
-                 onClick={(e) => { e.stopPropagation(); handleModeSwitch('wisdom'); }} 
-                 className={`p-2 transition-all duration-300 ${viewMode === 'wisdom' ? 'text-[#d4af37] scale-110' : 'text-stone-700 hover:text-stone-500'}`}
-                 title="Wisdom"
+                 onClick={(e) => { e.stopPropagation(); handleModeSwitch('journal'); }} 
+                 className={`p-2 transition-all duration-300 ${viewMode === 'journal' ? 'text-[#d4af37] scale-110' : 'text-stone-700 hover:text-stone-500'}`}
+                 title="Burner Journal"
                >
-                 <BookIcon className="w-5 h-5" />
+                 <FireIcon className="w-5 h-5" />
                </button>
 
                {/* 2. Chat (Center) */}
@@ -1432,7 +1575,7 @@ const App = () => {
                 />
             )}
             
-            {viewMode === 'wisdom' && <WisdomView />}
+            {viewMode === 'journal' && <BurnerJournalView isAudioEnabled={isAudioEnabled} />}
         </div>
       </main>
 
